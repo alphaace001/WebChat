@@ -1,7 +1,6 @@
 import streamlit as st
 import os
 import time
-from dotenv import load_dotenv
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_community.vectorstores.faiss import FAISS
 from langchain.embeddings import OllamaEmbeddings
@@ -14,15 +13,12 @@ from bs4 import BeautifulSoup
 import requests
 from urllib.parse import urljoin, urlparse
 from typing import List, Set
+import configparser
 
-# Load environment variables
-load_dotenv()
-
-# Load the Groq API key
-groq_api_key = os.getenv('GROQ_API_KEY')
-if not groq_api_key:
-    st.error("Groq API key not found. Please set the GROQ_API_KEY environment variable.")
-    st.stop()
+# Load environment variables from .env file
+config = configparser.ConfigParser()
+config.read(".env")
+api_key = config.get("GROQ", "GROQ_API_KEY")
 
 # Function to extract URLs
 def extract_urls(base_url: str) -> Set[str]:
@@ -144,7 +140,7 @@ if st.button("Extract URLs and Load Documents"):
         st.error("Please enter a valid base URL.")
 
 # Initialize the ChatGroq model
-llm = ChatGroq(api_key=groq_api_key, model="llama3-8b-8192")
+llm = ChatGroq(api_key=api_key, model="llama3-8b-8192")
 
 # Define the prompt template
 prompt_template = PromptTemplate(
