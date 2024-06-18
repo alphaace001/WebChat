@@ -1,4 +1,4 @@
-WeChat - Conversational Bot for Websites
+# WebChat - Conversational Bot for Websites
 
 WeChat is an innovative application that allows you to create a chatbot for any website using Retrieval-Augmented Generation (RAG) combined with a Large Language Model (LLM). The chatbot can answer questions based on the content of the provided website.
 
