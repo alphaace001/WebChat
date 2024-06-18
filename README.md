@@ -33,4 +33,5 @@ streamlit run project.py
 - Ollama
 - Python
 
-- ## Demo
+## Demo
+- https://github.com/alphaace001/WebChat/assets/166362606/422a96a2-b55e-4322-b7de-100e1748c9f2
