@@ -3,7 +3,7 @@ import os
 import time
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_community.vectorstores.faiss import FAISS
-from langchain.embeddings import OllamaEmbeddings
+from langchain.embeddings import GPT4AllEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_retrieval_chain
@@ -89,7 +89,7 @@ def load_documents_from_urls(urls: List[str]) -> List:
 
 # Initialize session state variables
 if "vectors" not in st.session_state:
-    st.session_state.embeddings = OllamaEmbeddings()
+    st.session_state.embeddings = GPT4AllEmbeddings()
     st.session_state.docs = []
     st.session_state.vectors = None
 
