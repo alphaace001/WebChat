@@ -3,7 +3,7 @@ import os
 import time
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_community.vectorstores.faiss import FAISS
-from langchain.embeddings import GPT4AllEmbeddings
+from langchain.embeddings import OllamaEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_retrieval_chain
@@ -47,7 +47,8 @@ def extract_urls(base_url: str) -> Set[str]:
 def validate_and_collect_url(url: str) -> bool:
     try:
         response = requests.head(url, allow_redirects=True, timeout=5)
-        return response.status_code < 400
+        if response.status_code < 400:
+            return True
     except requests.RequestException as e:
         print(f"Error accessing {url}: {e}")
     return False
@@ -88,27 +89,27 @@ def load_documents_from_urls(urls: List[str]) -> List:
 
 # Initialize session state variables
 if "vectors" not in st.session_state:
-    try:
-        st.session_state.embeddings = GPT4AllEmbeddings(
-            model_name="all-MiniLM-L6-v2.gguf2.f16.gguf",
-            gpt4all_kwarg={'allow_download': 'True'}
-        )
-        st.session_state.docs = []
-        st.session_state.vectors = None
-        st.session_state.text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-    except Exception as e:
-        st.error(f"Error initializing embeddings: {e}")
+    st.session_state.embeddings = OllamaEmbeddings()
+    st.session_state.docs = []
+    st.session_state.vectors = None
 
-st.title("Multi-Website Document Loader")
+st.markdown(
+    """
+    <div style="text-align: center;">
+        <h1>WebChat</h1>
+    </div>
+    """, 
+    unsafe_allow_html=True
+)
 
-# Descriptive markdown in the center
 st.markdown("""
     <div style='text-align: center; margin-top: 20px;'>
-        <h2>Welcome to the Multi-Website Document Loader!</h2>
+        <h2>Welcome to the  WebChat!</h2>
         <p>This tool allows you to extract and analyze content from multiple webpages within the same domain.</p>
         <h4>Step-by-Step Guide:</h4>
         <ol style='text-align: left; display: inline-block; text-align: left;'>
-            <li><strong>Enter the Base URL:</strong> Start by entering the base URL of the website you want to analyze. The tool will extract the specified number of unique URLs from the same domain and load their content. Note: Compile time will depend on number of URLs.</li>
+            <li><strong>Enter the Base URL:</strong> Start by entering the base URL of the website you want to analyze. The tool will extract the specified number of unique URLs from the same domain and load their content.
+            Note: Compile time will depend on number of urls </li>
             <li><strong>Load Documents:</strong> The extracted URLs will be used to load documents, which will be processed and stored for further analysis.</li>
             <li><strong>Input Your Query:</strong> After the documents are loaded, you can input your questions. The chatbot will provide responses based on the context of the loaded documents.</li>
         </ol>
@@ -135,6 +136,7 @@ if st.button("Extract URLs and Load Documents"):
             st.success(f"Loaded documents from {len(urls)} URLs successfully.")
             
             st.write("Creating vector store, please wait...")
+            st.session_state.text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
             st.session_state.final_documents = st.session_state.text_splitter.split_documents(st.session_state.docs)
             st.session_state.vectors = FAISS.from_documents(st.session_state.final_documents, st.session_state.embeddings)
             st.success("Vector store created successfully.")
