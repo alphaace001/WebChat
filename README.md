@@ -1,3 +1,7 @@
+#Demo
+
+https://github.com/user-attachments/assets/098a0959-67a6-424c-93fa-77aaaac3e126
+
 # WebChat
 
 WebChat is an innovative application that allows you to create a chatbot for any website using Retrieval-Augmented Generation (RAG) combined with a Large Language Model (LLM). The chatbot can answer questions based on the content of the provided website.
